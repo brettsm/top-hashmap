@@ -49,6 +49,20 @@ class HashMap {
         return true;
     }
 
+    get(key) {
+        const hashCode = this.hash(key);
+        let cur = this.buckets[hashCode];
+
+        while(cur) {
+            if(cur.key === key) 
+                return cur.val;
+        
+            cur = cur.next;
+        }
+        
+        return null;
+    }
+
     _resize(newCap) {
         const oldBuckets = this.buckets;
         this.capacity = newCap;
