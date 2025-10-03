@@ -16,3 +16,26 @@ test.set('kite', 'pink');
 test.set('lion', 'golden');
 
 console.log(test.entries());
+console.log(test.length());
+
+test.set('apple', 'green');
+test.set('jacket', 'gold');
+
+console.log(test.entries());
+console.log(test.length());
+
+test.set('moon', 'silver');
+
+console.log(test.entries());
+console.log(test.length());
+
+test.set('frog', 'orange');
+console.log(test.get('frog'));
+test.remove('moon');
+console.log(test.entries());
+console.log(test.values());
+console.log(test.entries());
+
+test.clear();
+
+console.log(test.entries());
