@@ -1,9 +1,7 @@
 class HashMap {
 
-    loadFactor = 0.75;
-    capacity = 16;
-
     constructor(capacity = 16, loadFactor = 0.75) { 
+        this.baseCap = capacity;
         this.capacity = capacity;
         this.loadFactor = loadFactor;
         this.buckets = new Array(this.capacity).fill(null);
@@ -34,7 +32,7 @@ class HashMap {
             while (cur) {
                 if (cur.key === key) {
                     cur.value = value;
-                    return true;
+                    return;
                 }
                 prev = cur;
                 cur = cur.next;
@@ -46,21 +44,103 @@ class HashMap {
         if (this.size / this.capacity > this.loadFactor) 
             this._resize(this.capacity * 2); 
         
-        return true;
     }
 
     get(key) {
         const hashCode = this.hash(key);
         let cur = this.buckets[hashCode];
 
-        while(cur) {
-            if(cur.key === key) 
-                return cur.val;
+        while (cur) {
+            if (cur.key === key) 
+                return cur.value;
         
             cur = cur.next;
         }
         
         return null;
+    }
+
+    has(key) {
+        return this.get(key) !== null;
+    }
+
+    remove(key) {
+        const hashCode = this.hash(key);
+        
+        let cur = this.buckets[hashCode];
+        if(!cur) return false;
+
+        if(cur.key === key) {
+            this.buckets[hashCode] = cur.next;
+            cur.next = null;
+            this.size--;
+            return true;
+        }
+
+        let prev = cur;
+        cur = cur.next;
+
+        while (cur) {
+            if (cur.key === key) {
+                prev.next = cur.next;
+                cur.next = null;
+                this.size--;
+                return true;
+            }
+            prev = cur;
+            cur = cur.next;
+        }
+        return false;
+    }
+
+    length() {
+        return this.size;
+    }
+
+    clear() {
+        this.capacity = this.baseCap;
+        this.buckets = new Array(this.capacity).fill(null);
+        this.size = 0;
+    }
+
+    keys() {
+        const retArray = [];
+
+        for (let head of this.buckets) {
+            let cur = head;
+            while (cur) {
+                retArray.push(cur.key);
+                cur = cur.next;
+            }
+        }
+
+        return retArray;
+    }
+
+    values() {
+        const retArray = [];
+        for (let head of this.buckets) {
+            let cur = head;
+            while (cur) {
+                retArray.push(cur.value);
+                cur = cur.next;
+            }
+        }
+
+        return retArray;
+    }
+
+    entries() {
+        const retArray = [];
+        for (let head of this.buckets) {
+            let cur = head;
+            while (cur) {
+                retArray.push([cur.key, cur.value]);
+                cur = cur.next;
+            }
+        }
+
+        return retArray;
     }
 
     _resize(newCap) {
@@ -72,7 +152,7 @@ class HashMap {
             let node = head;
             while(node) {
                 const next = node.next;
-                const hashCode = hash(node.key);
+                const hashCode = this.hash(node.key);
                 node.next = this.buckets[hashCode];
                 this.buckets[hashCode] = node;
                 node = next;
